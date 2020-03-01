@@ -1,0 +1,304 @@
+import sys
+import time 
+
+# These will have questions which the chatbot can recognize from a user
+# all lowercase
+countries = ["angola", 
+"algeria", 
+"benin", 
+"botswana", 
+"burkina faso", 
+"burundi", 
+"cabo verde", 
+"cameroon",
+"central african republic", 
+"chad", 
+"comoros",
+"democratic republic of congo", 
+"republic of congo",
+"cote d'ivoire",
+"djibouti",
+"egypt", 
+"equatorial guinea",
+"eritrea", 
+"eswatini",
+"ethiopia", 
+"gabon", 
+"gambia", 
+"ghana",
+"guinea", 
+"guinea bissau", 
+"kenya", 
+"lesotho", 
+"liberia", 
+"lybia",
+"madagascar",
+"malawi", 
+"mali", 
+"mauritania", 
+"mauritius",
+"morocco", 
+"mozambique", 
+"namibia", 
+"niger", 
+"nigeria", 
+"rwanda", 
+"sao tome and principe", 
+"senegal", 
+"seychelles",
+"sierra leone", 
+"somalia", 
+"south africa", 
+"sudan", 
+"tanzania", 
+"togo", 
+"tunisia", 
+"uganda", 
+"zambia", 
+"zimbabwe",] 
+
+# these are variables containing specific data
+
+angola = ["population:27.4 million, gdp(ppp):$187.3 billion, 3.0% growth, 4.0 5-year compound annual growth, $6,844 per capital, unemployment: 6.6%, inflation: 32.4%, fdi inflow: $14.4 billion"]
+algeria = ["population:40.8 million, gdp(ppp):$612.5 billion, 3.7% growth, 3.6% 5-year compound annual growth, $15,026 per capital,  unemployment: 11.2%, inflation: 6.4%, fdi inflow: $1.5 billion"]
+benin = ["population:11.1 million, gdp(ppp):$23.6 billion, 5.2% growth, 4.9% 5-year compound annual growth, $2,119 per capital,  unemployment: 1.0% , inflation: -0.8%, fdi inflow: $160.6 billion"]
+botswana = ["population:2.2 million, gdp(ppp):$36.4 billion, -0.3% growth, 4.2% 5-year compound annual growth, $17,042 per capital, unemployment: 18.4%, inflation: 2.8% , fdi inflow: $10.5 million"]
+burkinafaso = ["population:18.4 million, gdp(ppp):$32.8 billion, 4.0% growth, 5.1% 5-year compound annual growth, $1,782 per capital, unemployment: 3.0%, inflation: 0.7%, fdi inflow: $308.7 million"]
+burundi = ["population:9.6 million, gdp(ppp):$7.9 billion, -4.1% growth, 2.0% 5-year compound annual growth, $814 per capital, unemployment: 1.6%, inflation: 5.5%,  fdi inflow: $0.1 million"]
+caboverde = ["population:0.5 million, gdp(ppp):$3.5 billion, 1.8% growth, 1.5% 5-year compound annual growth, $6,662 per capital, unemployment: 10.5%, inflation: -1.5%, fdi inflow: $119,4 million"]
+cameroon = ["population:23.7 million, gdp(ppp):$76.9 billion, 5.9% growth, 5.3% 5-year compound annual growth, $3,249 per capital,  unemployment: 4.5%, inflation: 0.9% , fdi inflow: $128.2 million"]
+centralafricanrepublic = ["population:4.9 million, gdp(ppp):$3.2 billion, 4.3% growth, -4.4% 5-year compound annual growth, $652 per capital, unemployment: 6.9%, inflation:4.6%, fdi inflow:$31.2 million"]
+chad = ["population:11.9 million, gdp(ppp):$29.0 billion, 1.8% growth, 3.4% 5-year compound annual growth, $2,445 per capital, unemployment:5.8%, inflation:-1.1%, fdi inflow: $559.9 million"]
+comoros = ["population:0.8 million, gdp(ppp):$1.3 billion, 1.0% growth, 2.3% 5-year compound annual growth, $1,529 per capital , unemployment:20.0%, inflation:2.0%, fdi inflow: $8.0 million"]
+democraticrepublicofcongo= ["population:84.1 million, gdp(ppp):$65.0 billion, 7.7% growth, 6.9% 5-year compound annual growth, $773 per capital, unemployment:3.6%, inflation:22.4%, fdi inflow: $1.2 billion"]
+republicofcongo = ["population:4.5 million, gdp(ppp):$29.8 billion, 2.5% growth, 2.8% 5-year compound annual growth,$6,676 per capital, unemployment:11.2%, inflation:3.6%, fdi inflow: $2.0 billion"]
+cotedivoire = ["population:24.3 million, gdp(ppp):$87.8 billion, 8.6% growth, 8.9% 5-year compound annual growth, $3,609 per capital, unemployment:9.3%, inflation:1.0%, fdi inflow:$481.0 million"]
+djibouti = ["population:1.0 million, gdp(ppp):$3.3 billion, 6.5% growth, 5.8% 5-year compound annual growth, $3,370 per capital, unemployment:6.6%, inflation:3.0%, fdi inflow:$160.0 million"]
+egypt = ["population:90.2 million, gdp(ppp):$1.1 trillion, 4.2% growth, 3.4% 5-year compound annual growth, $12,554 per capital, unemployment:12.0%, inflation:10.2%, fdi inflow:$8.1 billion"]
+equatorialguinea = ["population:0.8 million, gdp(ppp):$31.7 billion, -12.2% growth, -2.8% 5-year compound annual growth, $38,639 per capital, unemployment:7.3%, inflation:1.4%, fdi inflow:$54.0 million"]
+eritrea = ["population:6.5 million, gdp(ppp):$9.2 million, 4.8% growth, 4.7% 5-year compound annual growth, $1,410 per capital, unemployment:7.3%, inflation:9.0%, fdi inflow:$52.3 million"] 
+eswatini = ["population:1.1 million, gdp(ppp):$11.1 billion, 1.7% growth, 2.5% 5-year compound annual growth, $9,776 per capital, unemployment:25.3%, inflation:8.0%, fdi inflow:$10.6 million"]
+ethiopia = ["population:91.2 million, gdp(ppp):$177.5 billion, 10.2% growth, 9.5% 5-year compound annual growth, $1,946 per capital, unemployment:5.7%, inflation:7.3%, fdi inflow:$3.2 billion"]
+gabon = ["population:1.9 million, gdp(ppp):$35.9 billion, 4.0% growth, 4.3% 5-year compound annual growth, $19.056 per capital, unemployment:18.5%, inflation:2.1%, fdi inflow:$703.2 million"]
+gambia = ["population:2.1 million, gdp(ppp):$3.4 billion, 4.4% growth, 3.6% 5-year compound annual growth, $1,667 per capital, unemployment:29.7%, inflation:7.2%, fdi inflow:$-1.8 million"]
+ghana = ["population:27.6 million, gdp(ppp):$121.7 billion, 3.5% growth, 5.7% 5-year compound annual growth, $4,412 per capital, unemployment:5.8%, inflation:17.5%, fdi inflow:$3.5 billion"]
+guinea = ["population:12.7 million, gdp(ppp):$16.0 billion, 0.1% growth, 2.2% 5-year compound annual growth, $1,264 per capital, unemployment:6.8%, inflation:8.2%, fdi inflow:$104.3 million"]
+guineabissau = ["population:1.7 million, gdp(ppp):$2.9 billion, 4.8% growth, 2.6% 5-year compound annual growth, $1,730 per capital , unemployment:6.5%, inflation:1.5%, fdi inflow:$19.6 million"]
+kenya = ["population:45.5 million, gdp(ppp):$152.8 billion, 5.6% growth, 5.4% 5-year compound annual growth, $3,361 per capital, unemployment:11.0%, inflation:6.3%, fdi inflow:$394.0 million"]
+lesotho = ["population:1.9 million, gdp(ppp):$7.0 billion, 2.5% growth, 3.5% 5-year compound annual growth, $3,601 per capital, unemployment:27.4%, inflation:7.0%, fdi inflow:$132.2 million"]
+liberia = ["population:4.4 million, gdp(ppp):$3.8 billion, 0.0% growth, 3.3% 5-year compound annual growth, $855 per capital, unemployment:4.0%, inflation:8.8%, fdi inflow:$453.2 million"]
+libya = ["population:6.4 million, gdp(ppp):$55.4 billion, -6.4% growth, 3.3% 5-year compound annual growth, $8,678 per capital, unemployment:19.2%, inflation:27.1%, fdi inflow:$492.6 million"]
+madagascar = ["population:24.9 million, gdp(ppp):$37.5 billion, 3.0% growth, 3.2% 5-year compound annual growth, $1,505 per capital, unemployment:2.1%, inflation:6.7%, fdi inflow:$540.6 million"]
+malawi = ["population:18.6 million, gdp(ppp):$21.1 million, 3.0% growth, 3.6% 5-year compound annual growth, $1,134 per capital, unemployment:6.7%, inflation:21.7%, fdi inflow:$325.6 million"]
+mali = ["population:16.8 million, gdp(ppp):$38.1 billion, 6.1% growth, 4.0% 5-year compound annual growth, $2,266 per capital, unemployment:8.1%, inflation:-1.8%, fdi inflow:$125.5 million"]
+mauritania = ["population:3.8 million, gdp(ppp):$16.4 billion, 1.9% growth, 4.0% 5-year compound annual growth, $4,328 per capital, unemployment:11.7%, inflation:1.5%, fdi inflow:$271.6 million"]
+mauritius = ["population: 1.3 million, gdp(ppp):$25.9 billion, 3.4% growth, 3.4% 5-year compound annual growth, $20,422 per capital, unemployment:7.8% , inflation:1.0%, fdi inflow:$349.4 million"]
+morocco = ["population:33.8 million, gdp(ppp):$281.8 billion, 4.5% growth, 3.2% 5-year compound annual growth, $8,330 per capital,  unemployment:10.0%, inflation:1.6%, fdi inflow:$2.3 billion"]
+mozambique = ["population:28.8 million, gdp(ppp):$34.9 billion, 6.3% growth, 6.4% 5-year compound annual growth, $1,215 per capital, unemployment:24.4%, inflation:19.2%, fdi inflow:$3.1 billion"]
+namibia = ["population:2.3 million, gdp(ppp):$26.0 billion, 4.5% growth, 4.5% 5-year compound annual growth, $11,290 per capital, unemployment:25.6%, inflation:6.7%, fdi inflow:$274.9 million"]
+niger = ["population:18.2 million, gdp(ppp):$20.1 billion, 4.0% growth, 6.5% 5-year compound annual growth, $1,107 per capital,  unemployment:2.6%, inflation:1.1%, fdi inflow:$292.8 million"]
+nigeria = ["population:183.6 million, gdp(ppp):$1.1 trillion, 2.7% growth, 3.4% 5-year compound annual growth, $5,942 per capital, unemployment:5.0%, inflation:15.7%, fdi inflow:$4.4 billion"]
+rwanda = ["population:11.5 million, gdp(ppp):$22.8 billion, 6.9% growth, 7.2% 5-year compound annual growth, $1,977 per capital,  unemployment:2.5%, inflation:5.7%, fdi inflow:$409.8 million"]
+saotomeprincipe = ["population:0.2 million, gdp(ppp):$0.6 billion, 4.0% growth, 4.2% 5-year compound annual growth, $3,072 per capital, unemployment:13.6%, inflation:5.4%, fdi inflow:$22.2 million"]
+senegal = ["populuation:15.4 million, gdp(ppp):$39.7 billion, 6.5% growth, 5.1% 5-year compound annual growth, $2,577 per capital, unemployment:9.5%, inflation:0.9%, fdi inflow:392.8 million"]
+seychelles = ["population:0.1 million, gdp(ppp):$2.6 billion, 4.4% growth, 5.0% 5-year compound annual growth, $27.602 per capital, unemployment:N/A, inflation:-1.0%, fdi inflow:$155.2 million"]
+sierraleone = ["population:6.4 million, gdp(ppp):$10.8 billion, -21.5% growth, 5.0% 5-year compound annual growth, $1,672 per capital, unemployment:3.0%, inflation:11.3%, fdi inflow:$516.0 million"]
+somalia = ["population:10.8 million, gdp(ppp):3.7% growth, unemployment:6.6%, inflation:N/A, fdi inflow:$339.0 million"]
+southafrica = ["population:55.9 million, gdp(ppp):$739.4 billion, 1.3% growth, 1.6 5-year compound annual growth, $13,225 per capital, unemployment:25.9%, inflation:6.3%, fdi inflow:$2.3 billion"]
+sudan = ["population:39.6 million, gdp(ppp):$176.1 billion, 3.5% growth, 2.3% 5-year compound annual growth, $4,447 per capital, unemployment:13.3%, inflation:17.8%, fdi inflow:$1.1 billion"]
+tanzania = ["population:48.6 million, gdp(ppp):$149.8 billion, 7.0% growth, 6.6% 5-year compound annual growth, $3,080 per capital, unemployment:2.6%, inflation:5.2%, fdi inflow:$1.4 billioin"]
+togo = ["population:7.5 million, gdp(ppp):$11.6 billion, 5.3% growth, 5.5% 5-year compound annual growth, $1,550 per capital, unemployment:6.8%, inflation:0.9%, fdi inflow:$254.9 million"]
+tunisia = ["population:11.2 million, gdp(ppp):$130.6 billion, 0.8% growth, 2.1% 5-year compound annual growth, $11,634 per capital, unemployment:14,8%, inflation:3.7%, fdi inflow:$957.6 million"]
+uganda = ["population:41.1 million, gdp(ppp):$85.0 billion, 5.0% growth, 4.3% 5-year compound annual growth, $2,068 per capital,  unemployment:2.3%, inflation:5.5%, fdi inflow:$541.2 million"]
+zambia = ["population:16.7 million, gdp(ppp):$64.9 billion, 3.6% growth, 4.6% 5-year compound annual growth, $3,880 per capital, unemployment:7.5%, inflation:17.9%, fdi inflow:$468.5 million"]
+zimbabwe = ["population:14.5 million, gdp(ppp):$28.6 billion, 1.5% growth, 4.1% 5-year compound annual growth, $1,970 per capital,  unemployment:5.1%, inflation:-1.6%, fdi infow:$319.4 million"]
+
+# These are answers in response to certain user input - this matches the questions set question[0] == answers[0]
+facts = ["the quick facts of angola : " + ' '.join(angola), 
+"the quick facts of algeria are: " + ' '.join(algeria), 
+"the quick facts of benin are: " + ' '.join(benin), 
+"the quick facts of botswana are:" + ' '.join(botswana), 
+"the quick facts of burkina faso are:" + ' '.join(burkinafaso), 
+"the quick facts of burundi are:" + ' '.join(burundi), 
+"the quick facts of cabo verde are:" + ' '.join(caboverde), 
+"the quick facts of cameroon are:" + ' '.join(cameroon), 
+"the quick facts of central african republic are:" + ' '.join(centralafricanrepublic), 
+"the quick facts of chad are:" + ' '.join(chad), 
+"the quick facts of comoros are:" + ' '.join(comoros), 
+"the quick facts of democratic republic of congo are:" + ' '.join(democraticrepublicofcongo), 
+"the quick facts of republic of congo are:" + ' '.join(republicofcongo), 
+"the quick facts of cote d'ivoire are :" + ' '.join(cotedivoire), 
+"the quick facts of djibouti are :" + ' '.join(djibouti), 
+"the quick facts of egypt are :" + ' '.join(egypt), 
+"the quick facts of equatorial guinea are :" + ' '.join(equatorialguinea), 
+"the quick facts of eritrea are:" + ' '.join(eritrea), 
+"the quick facts of eswatini are:" + ' '.join(eswatini), 
+"the quick facts of ethiopia are:" + ' '.join(ethiopia), 
+"the quick facts of gabon are:" + ' '.join(gabon), 
+"the quick facts of gambia are:" + ' '.join(gambia), 
+"the quick facts of ghana are:" + ' '.join(ghana), 
+"the quick facts of guinea are:" + ' '.join(guinea), 
+"the quick facts of guinea bissau are:" + ' '.join(guineabissau), 
+"the quick facts of kenya are:" + ' '.join(kenya), 
+"the quick facts of lesotho are:" + ' '.join(lesotho), 
+"the quick facts of liberia are:" + ' '.join(liberia), 
+"the quick facts of libya are:" + ' '.join(libya), 
+"the quick facts of madagascar are:" + ' '.join(madagascar), 
+"the quick facts of malawi are:" + ' '.join(malawi), 
+"the quick facts of mali are:" + ' '.join(mali), 
+"the quick facts of mauritania are:" + ' '.join(mauritania), 
+"the quick facts of mauritius are:" + ' '.join(mauritius), 
+"the quick facts of morocco are:" + ' '.join(morocco), 
+"the quick facts of mozambique are:" + ' '.join(mozambique), 
+"the quick facts of namibia are:" + ' '.join(namibia), 
+"the quick facts of niger are:" + ' '.join(niger), 
+"the quick facts of nigeria are:" + ' '.join(nigeria), 
+"the quick facts of rwanda are:" + ' '.join(rwanda), 
+"the quick facts of sao tome & principe are:" + ' '.join(saotomeprincipe), 
+"the quick facts of senegal are:" + ' '.join(senegal), 
+"the quick facts of seychelles are:" + ' '.join(seychelles), 
+"the quick facts of sierra leone are:" + ' '.join(sierraleone), 
+"the quick facts of somalia are:" + ' '. join(somalia), 
+"the quick facts of south africa are:" + ' '.join(southafrica), 
+"the quick facts of sudan are:" + ' '.join(sudan),
+"the quick facts of tanzania are:" + ' '.join(tanzania), 
+"the quick facts of togo are:" + ' '.join(togo), 
+"the quick facts of tunisia are:" + ' '.join(tunisia), 
+"the quick facts of uganda are:" + ' '.join(uganda), 
+"the quick facts of zambia are:" + ' '.join(zambia), 
+"the quick facts of zimbabwe are:" + ' '.join(zimbabwe)]
+
+user_input = ' ' # this will contain user input
+exit = 0
+
+
+print ('hello, i am an african expert data countries chatbot. it will be a pleasure to help you! (type "exit" to end the conversation)\n')
+
+# We iterate through question-answer session until user types 'exit'
+while exit == 0:
+
+    user_input = input('Please, choose a country:')
+    user_input = user_input.lower()
+
+    str(user_input).lower() # make everything lowercase to match strings independent of the case
+
+    if user_input == "exit":
+        exit = 1  # if user types 'exit' - set exit to 1 to stop the while loop
+        print ('GAIA is terminating, thank you.')
+        
+        break
+    
+    elif user_input in countries:
+    # index searches the list for a given string - value 'index' will contain the numeric index - position in the string
+      index = countries.index(user_input)
+      print (facts[index])
+        
+    else:
+      # the database does not recognize the question
+      print ("I am sorry, I did not understand that, can you repeat?")
+     
+print("Have I answered all your questions for today (Yes or No)?")
+userClose = input()
+if (userClose == "No") or (userClose == "no"):
+    print("What other informations would you need?")
+    user = input()
+    time.sleep(5)
+    print("We will consider your request.Thanks")
+    sys.exit(1)
+if (userClose == "Yes") or (userClose == "yes"):
+    print("Can I take a few extra minutes of your time?")
+    user = input()    
+if (user == "nah") or (user == "no") or (user == "nope"):
+            print("No worries, have a good day" or "That's fine, take care")
+            sys.exit(1)
+if (user == "Yes") or (user == "Yeah") or (user == "yeah") or (user == "yes"):
+            print("In order to improve our services I would like your personal feedback.")
+            time.sleep(1)  
+            print("On a scale of one to ten how pleased were you with the advice and information you were given?")
+else:
+    print("I would like a yes or no, thank you.")
+
+usersRating = ("1","2","3","4","5","6","7","8","9","10")  
+while True:
+    ui = input()
+    if ui not in usersRating:
+        print ("I would like a numeric value from one to ten as a response.")
+    else:
+        break                    
+    
+if ui in usersRating[0:4]:
+        print("What can I do to improve our services?")
+        input()
+        print("I'm sorry for the inconvience our lack of services may have caused you.")
+        
+if ui in usersRating[4:7]:
+        print("Is there anything else I can additionally do to make you feel more comfortable with what we have to offer?")
+        input()
+        print("Thank you greatly for your feedback!")
+        
+if ui in usersRating[7:10]:
+        print("Thank you for your generous rating!")
+        
+        
+time.sleep(1)        
+print("Give me five seconds please.")        
+time.sleep(5)
+                               
+import random
+
+chatbotQuestion = ("I'm glad to hear that", "I'm glad that you're satisified with our services.")
+usersMood = ("happy","overjoyed", "sad", "frustrated", "angry", "impatient", "overwhelmed",)
+usersFeed = ("Great service" , "Good service" , "Perfect service" , "Couldn't have asked for anything better" , "I didn't like your service" , "Disappointing" , "I don't like your service" , "Awful service" , "Terrible service" , "I hate your service")
+
+if ui in usersRating[0:4]:
+    assumptionMood = ["impatient", "overwhelmed",]
+    print("From the feedback you gave us you seem to be: "  + random.choice(assumptionMood) + ".")
+    print("Why is that?")
+    input()
+    time.sleep(2)
+    print("I see, please enter one of the following feedback statements so I can further understand exactly how you feel.")
+    time.sleep(4)
+    print(', '.join(usersFeed))
+
+if ui in usersRating[4:7]:
+    assumptionMood = ["sad", "frustrated", "angry"]
+    print("From the feedback you gave us you seem to be: "  + random.choice(assumptionMood) + ".")
+    print("Why is that?")
+    input()
+    time.sleep(1)
+    print("I see, please enter one of the following feedback statements so I can further understand exactly how you feel.")
+    time.sleep(4)
+    print(', '.join(usersFeed))
+
+if ui in usersRating[7:10]:
+    assumptionMood = ["happy","overjoyed"]
+    print("From the feedback you gave us you seem to be: "  + random.choice(assumptionMood) + ".")
+    print("Why is that?")
+    input()
+    time.sleep(1)
+    print("I see, please enter one of the following feedback statements so I can further understand exactly how you feel.")
+    time.sleep(4)
+    print(', '.join(usersFeed))
+
+um = input()
+if um in usersFeed[0:4]:
+    usersMood = ["happy", "overjoyed"]
+    print("I see that you're genuinely " + (random.choice(usersMood) + "."))
+    print (random.choice(chatbotQuestion))
+    exit()
+if um in usersFeed[4:7]:
+    usersMood = ["sad", "angry", "frustrated"]
+    chatbotQuestion = ("I'm sorry, what were you looking for?", "What can I do better?")
+    print(random.choice(chatbotQuestion))
+    input()
+    print("Thank you for your time and I now understand why you feel " + (random.choice(usersMood) + "."))
+    exit ()
+if um in usersFeed[7:10]:
+    usersMood = ["impatient", "overwhelmed"]
+    chatbotQuestion = ("I'm sorry that I made you feel " + random.choice(usersMood) + " what can I do next time to make up for it?")
+    print(chatbotQuestion)
+    input()
+    print("Thank you for your feedback and I hope I can make you feel better next time.")
+   
+    
+
